@@ -5,17 +5,18 @@ import {
   Param,
   Post,
   Query,
-  Req,
-  Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/dtos/CreateUser.dto';
-import { Request, Response } from 'express';
 
 @Controller('users')
 export class UsersController {
   @Get('/')
-  getUsers(@Query('sortBy') sortBy: string) {
-    console.log('sortBy: ', sortBy);
+  getUsers(@Query('sortDesc') sortDesc: boolean = false) {
+    console.log('sortDesc: ', sortDesc);
+    console.log('sortDesc type: ', typeof sortDesc);
+
     return [
       { id: 1, name: 'Erik' },
       { id: 2, name: 'Lolka' },
@@ -23,8 +24,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param() userId: string) {
-    console.log('userId: ', userId);
+  getUserById(@Param('id') userId: number) {
+    console.log('userId: ', typeof userId); // number
     return [{ id: 1, name: 'Erik' }];
   }
 
@@ -36,13 +37,14 @@ export class UsersController {
     ];
   }
 
-  @Post('/createtest')
-  createUserTest(@Req() request: Request, @Res() response: Response) {
-    console.log('post body: ', request.body);
-    response.send('Created');
-  }
+  //   @Post('/createtest')
+  //   createUserTest(@Req() request: Request, @Res() response: Response) {
+  //     console.log('post body: ', request.body);
+  //     response.send('Created');
+  //   }
 
   @Post('/create')
+  @UsePipes(new ValidationPipe())
   createUser(@Body() userData: CreateUserDto) {
     console.log(userData);
     return {};
